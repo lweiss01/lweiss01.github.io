@@ -9,6 +9,6 @@
 
 
 
- ##### Abe
- ##### Krystyana
- ##### Lisa
+- Abe
+- Krystyana
+- Lisa
