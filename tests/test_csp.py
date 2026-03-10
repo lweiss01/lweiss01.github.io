@@ -12,6 +12,7 @@ def layout_content():
 def test_csp_presence(layout_content):
     content = layout_content
 
+def test_csp_presence(layout_content):
     # Regex to find the CSP meta tag
     # It looks for <meta http-equiv="Content-Security-Policy" content="...">
     csp_pattern = re.compile(
@@ -19,7 +20,7 @@ def test_csp_presence(layout_content):
         re.IGNORECASE | re.DOTALL
     )
 
-    match = csp_pattern.search(content)
+    match = csp_pattern.search(layout_content)
     assert match, "Content-Security-Policy meta tag not found in default.html"
 
     csp_content = match.group(1)
