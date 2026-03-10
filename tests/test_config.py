@@ -21,6 +21,11 @@ def test_config_is_valid_yaml():
 
     assert isinstance(config, dict), "Config file should be a dictionary."
 
+def check_theme_config(config):
+    """Check if the theme is set correctly in the config dictionary."""
+    assert "theme" in config, "Theme key is missing in config."
+    assert config["theme"] == "jekyll-theme-tactile", f"Expected theme 'jekyll-theme-tactile', but got '{config.get('theme')}'"
+
 def test_theme_is_correct():
     """Verify that the theme is set to jekyll-theme-tactile."""
     if not os.path.exists(CONFIG_FILE):
@@ -29,8 +34,19 @@ def test_theme_is_correct():
     with open(CONFIG_FILE, "r") as f:
         config = yaml.safe_load(f)
 
-    assert "theme" in config, "Theme key is missing in config."
-    assert config["theme"] == "jekyll-theme-tactile", f"Expected theme 'jekyll-theme-tactile', but got '{config.get('theme')}'"
+    check_theme_config(config)
+
+def test_theme_missing_in_config():
+    """Verify that an error is raised if the theme key is missing."""
+    config = {"title": "Test"}
+    with pytest.raises(AssertionError, match="Theme key is missing in config."):
+        check_theme_config(config)
+
+def test_theme_incorrect_in_config():
+    """Verify that an error is raised if the theme is incorrect."""
+    config = {"theme": "wrong-theme"}
+    with pytest.raises(AssertionError, match="Expected theme 'jekyll-theme-tactile'"):
+        check_theme_config(config)
 
 def test_critical_files_exist():
     """Verify that critical files like README.md and index.md exist."""
