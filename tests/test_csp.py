@@ -1,13 +1,15 @@
 import os
 import re
+import pytest
 
-def test_csp_presence():
+@pytest.fixture(scope="module")
+def layout_content():
     layout_path = os.path.join('_layouts', 'default.html')
     assert os.path.exists(layout_path), f"{layout_path} does not exist"
-
     with open(layout_path, 'r', encoding='utf-8') as f:
-        content = f.read()
+        return f.read()
 
+def test_csp_presence(layout_content):
     # Regex to find the CSP meta tag
     # It looks for <meta http-equiv="Content-Security-Policy" content="...">
     csp_pattern = re.compile(
@@ -15,7 +17,7 @@ def test_csp_presence():
         re.IGNORECASE | re.DOTALL
     )
 
-    match = csp_pattern.search(content)
+    match = csp_pattern.search(layout_content)
     assert match, "Content-Security-Policy meta tag not found in default.html"
 
     csp_content = match.group(1)
@@ -27,9 +29,5 @@ def test_csp_presence():
     assert "img-src 'self' data:" in csp_content
     assert "object-src 'none'" in csp_content
 
-def test_no_html5shiv():
-    layout_path = os.path.join('_layouts', 'default.html')
-    with open(layout_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    assert "html5shiv.googlecode.com" not in content, "Legacy html5shiv script should be removed"
+def test_no_html5shiv(layout_content):
+    assert "html5shiv.googlecode.com" not in layout_content, "Legacy html5shiv script should be removed"
